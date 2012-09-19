@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>jQuery UI Autocomplete - Multiple values</title>
+	<link rel="stylesheet" href="css/ui/jquery.ui.all.css">
+	<script src="jquery-1.7.2.js"></script>
+	<script src="ui/jquery.ui.core.js"></script>
+	<script src="ui/jquery.ui.widget.js"></script>
+	<script src="ui/jquery.ui.position.js"></script>
+	<script src="jquery.ui.autocomplete.js"></script>
+	<link rel="stylesheet" href="css/jquery.aceditable.css">
+	<link rel="stylesheet" href="css/demos.css">
+		
+	<script>
+	
+	function showProfile(value){
+			alert('Show profile : ' + value);
+		}
+	$(function() {
+		var availableTags = [
+			"ActionScript",
+			"AppleScript",
+			"Asp",
+			"BASIC",
+			"C",
+			"C++",
+			"Clojure",
+			"COBOL",
+			"ColdFusion",
+			"Erlang",
+			"Fortran",
+			"Groovy",
+			"Haskell",
+			"Java",
+			"JavaScript",
+			"Lisp",
+			"Perl",
+			"PHP",
+			"Python",
+			"Ruby",
+			"Scala",
+			"Scheme"
+		];
+		
+		function split( val ) {
+			return val.split( /,\s*/ );
+		}
+		function extractLast( term ) {
+			var arrData = split( term );
+			var start = 0;
+			var termText = '';
+			current = getCaretPos($('#tags2').get()[0]);
+			if(arrData.length > 1){
+				for(count = 0 ; count < arrData.length; count++){
+					end = start + arrData[count].length;
+					if(current >= start && current <= end){
+						termText = 	arrData[count];
+					}
+					start = start + arrData[count].length + 2;
+				}
+			}
+			if(termText == ''){
+				termText = arrData.pop();
+			}
+			return termText;
+		}
+
+		function getCaretLocation(obj){
+			current  = getCaretPos(obj);
+			var arrData = split( $(obj).text() );
+			var start = 0;
+			var termText = 0;
+			textCount = 0;
+			if(arrData.length > 1){
+				for(count = 0 ; count < arrData.length; count++){
+					end = start + arrData[count].length;
+					if(arrData[count].length > 0){
+						if(current >= start && current <= end){
+							termText = textCount + 1;
+						}
+					}
+					textCount++;
+					start = start + arrData[count].length + 3;
+				}
+			}
+			return termText;
+		}
+		var sTerm = '';
+		$( "#tags2" )
+			// don't navigate away from the field on tab when selecting an item
+			.bind( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB &&
+						$( this ).data( "autocomplete" ).menu.active ) {
+						event.preventDefault();
+				}
+				if(event.keyCode == $.ui.keyCode.BACKSPACE){
+					current  = getCaretPos($(this).get()[0]);
+					var arrData = split( $(this).text() );
+					var start = 0;
+					var termText = 0;
+					textCount = 0;
+					if(arrData.length > 1){
+						for(count = 0 ; count < arrData.length; count++){
+							end = start + arrData[count].length;
+							if(arrData[count].length > 0){
+								if(current >= start && current <= end){
+									termText = textCount + 1;
+								}
+							}
+							textCount++;
+							start = start + arrData[count].length + 3;
+						}
+					}
+					if(!isNaN(termText))
+					$(this).find('a:nth-child(' + termText + ')').remove();
+				
+					/*current  = getCaretPos($(this).get()[0]);
+					var start = 0;
+					$(this).find('a').each(function(){
+						end = start + $(this).text().length;
+						if(current >= start && current <= end){
+							$(this).remove();
+						}
+						start = start + $(this).text().length + 2;
+					});*/
+				}
+			})
+			.autocomplete({
+				minLength: 0,
+				source: function( request, response ) {
+					sTerm = extractLast( request.term );
+					// delegate back to autocomplete, but extract the last term
+					response( $.ui.autocomplete.filter(
+						availableTags, sTerm ) );
+				},
+				focus: function() {
+					// prevent value inserted on focus
+					return false;
+				},
+				select: function( event, ui ) {
+					var terms = split( $(this).html() );
+					
+					
+					terms.pop();
+					value = '<a href="javascript:void(0);" onclick="javascript:showProfile(\'' + ui.item.value + '\')">' + ui.item.value + '</a>';
+					
+					// add the selected item
+					if(0 < terms.indexOf(sTerm)){
+						terms.splice(terms.indexOf(sTerm), 1, value);
+					}else{	
+						terms.push(value);
+					}
+
+					// add placeholder to get the comma-and-space at the end
+					terms.push( "" );
+					$(this).html(terms.join( ", " ));
+					//this.value = terms.join( ", " );
+					setCaretPos($(this).get()[0]);
+					return false;
+				}
+			});
+	});
+
+	function getCaretPos(element) {
+	    var caretOffset = 0;
+	    if (typeof window.getSelection != "undefined") {
+	        var range = window.getSelection().getRangeAt(0);
+	        var preCaretRange = range.cloneRange();
+	        preCaretRange.selectNodeContents(element);
+	        preCaretRange.setEnd(range.endContainer, range.endOffset);
+	        caretOffset = preCaretRange.toString().length;
+	    } else if (typeof document.selection != "undefined" && document.selection.type != "Control") {
+	        var textRange = document.selection.createRange();
+	        var preCaretTextRange = document.body.createTextRange();
+	        preCaretTextRange.moveToElementText(element);
+	        preCaretTextRange.setEndPoint("EndToEnd", textRange);
+	        caretOffset = preCaretTextRange.text.length;
+	    }
+	    return caretOffset;
+	}
+	
+	function setCaretPos(contentEditableElement)
+	{
+		var range,selection;
+	    if(document.createRange)//Firefox, Chrome, Opera, Safari, IE 9+
+	    {
+	        range = document.createRange();
+	        range.selectNodeContents(contentEditableElement);
+	        range.collapse(false);
+	        selection = window.getSelection();
+	        selection.removeAllRanges();
+	        selection.addRange(range);
+	    }
+	    else if(document.selection)//IE 8 and lower
+	    { 
+	        range = document.body.createTextRange();
+	        range.moveToElementText(contentEditableElement);
+	        range.collapse(false);
+	        range.select();
+	    }
+	}
+
+	</script>
+</head>
+<body>
+<style>
+.ui-autocomplete{
+width:605px;
+}
+</style>
+<div class="demo" style="width:700px;">
+	<div class="ui-widget">
+		<label for="tags">Autocompleter and Content-editable: </label>
+		<div class="editable_base editable_input_area">
+			<div class="editable_shawdow">
+		<div id="tags2" size="50" class="editable_input" contenteditable="" ></div>
+		</div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
