@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html><head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title> Autocompleter Demo</title>
+  
+  <script type="text/javascript" src="jquery-1.6.1.min.js"></script>
+  <script type="text/javascript" src="jquery-ui.js"></script>
+  <script type="text/javascript" src="jquery-ui.triggeredAutocomplete.js"></script>
+  <link rel="stylesheet" type="text/css" href="normalize.css">
+  <link rel="stylesheet" type="text/css" href="result-light.css">
+  <link rel="stylesheet" type="text/css" href="jquery-ui.css">
+  
+<script type="text/javascript">//<![CDATA[ 
+$(window).load(function(){
+ 
+var arrKeys = [
+				 "Asp",
+				 "BASIC",
+				 "COBOL",
+				 "ColdFusion",
+				 "Erlang",
+				 "Fortran",
+				 "Groovy",
+				 "Java",
+				 "JavaScript",
+				 "Lisp",
+				 "Perl",
+				 "PHP",
+				 "Python",
+				 "Ruby",
+				 "Scala",
+				 "Scheme"
+			];
+			
+$('#inputbox').triggeredAutocomplete({
+   hidden: '#hidden_inputbox',
+    source: [
+				 "Asp",
+				 "BASIC",
+				 "COBOL",
+				 "ColdFusion",
+				 "Erlang",
+				 "Fortran",
+				 "Groovy",
+				 "Java",
+				 "JavaScript",
+				 "Lisp",
+				 "Perl",
+				 "PHP",
+				 "Python",
+				 "Ruby",
+				 "Scala",
+				 "Scheme"
+			],
+   trigger: "@" 
+});
+
+});//]]>  
+</script>
+</head>
+<body>
+  <textarea aria-haspopup="true" aria-autocomplete="list" role="textbox" autocomplete="off" class="ui-autocomplete-input" id="inputbox" style="width: 400px; height: 90px;"></textarea>
+
+<input type="hidden" id="testhidden" />
+  
+<ul style="z-index: 1; top: -0.5px; left: 0px; display: none; width: 1364px; position: relative;" aria-activedescendant="ui-active-menuitem" role="listbox" class="ui-autocomplete ui-menu ui-widget ui-widget-content ui-corner-all">
+	<li role="menuitem" class="ui-menu-item">
+		<a tabindex="-1" class="ui-corner-all">Asp</a>
+	</li>
+	<li role="menuitem" class="ui-menu-item">
+		<a tabindex="-1" class="ui-corner-all">BASIC</a>
+	</li>
+	<li role="menuitem" class="ui-menu-item">
+		<a tabindex="-1" class="ui-corner-all">JavaScript</a>
+	</li>
+</ul>
+</body>
+</html>
